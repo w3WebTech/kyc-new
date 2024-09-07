@@ -4,7 +4,20 @@
       class="step"
       v-if="currentStep === 1"
     >
-      <h1>Step 1 / 5</h1>
+      <h1
+        style="
+          color: black;
+
+          border: none;
+          border-radius: 4px;
+
+          padding: 3px;
+          font: bold;
+        "
+        class="flex justify-center"
+      >
+        Step 1 / 5
+      </h1>
       <div>
         <VTextField
           v-model="apCode"
@@ -110,17 +123,22 @@ const captureImage = () => {
 
 const getLocation = async () => {
   try {
-    const position = await new Promise((resolve, reject) => {
-      navigator.geolocation.getCurrentPosition(resolve, reject, { enableHighAccuracy: true })
-    })
-    coordinates.value = {
-      latitude: position.coords.latitude,
-      longitude: position.coords.longitude,
-    }
+    navigator.geolocation.getCurrentPosition(
+      position => {
+        coordinates.value = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        }
+        locationLoading.value = false
+      },
+      error => {
+        console.error('Error getting location:', error)
+        locationLoading.value = false
+      },
+      { enableHighAccuracy: true },
+    )
   } catch (error) {
     console.error('Error getting location:', error)
-  } finally {
-    locationLoading.value = false
   }
 }
 
@@ -130,8 +148,8 @@ const validateMobileNumber = () => {
   isValidMobileNumber.value = pattern.test(mobileNumber.value)
 }
 
-onMounted(() => {
-  initCamera()
+onMounted(async () => {
+  await initCamera()
   getLocation()
 })
 
