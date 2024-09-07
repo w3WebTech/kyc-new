@@ -65,7 +65,7 @@
         <p>Longitude: {{ coordinates.longitude }}</p>
       </div>
       <div v-else>
-        <p>Error loading location</p>
+        <p></p>
       </div>
       <div style="display: flex; justify-content: flex-end; margin-top: 20px">
         <button
