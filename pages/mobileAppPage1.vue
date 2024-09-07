@@ -1,18 +1,18 @@
 <template>
-  <div class="container">
+  <div class="border boder-2 rounded-md p-5">
     <div
       class="step"
       v-if="currentStep === 1"
     >
       <h1>Step 1 / 5</h1>
-      <div class="input-group">
-        <label for="apCode">App Code</label>
-        <input
-          type="text"
-          id="apCode"
+      <div>
+        <VTextField
           v-model="apCode"
-          placeholder="Example: AP001"
-        />
+          label="Code "
+          required
+          class="py-2"
+          width="300"
+        ></VTextField>
       </div>
       <div v-if="!imageData">
         <video
@@ -21,7 +21,22 @@
           height="200"
           autoplay
         ></video>
-        <button @click="captureImage">Live Capture</button>
+        <button
+          @click="captureImage"
+          width="300"
+          style="
+            background-color: blue;
+            color: white;
+            width: 280px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            padding: 3px;
+            text: bold;
+          "
+        >
+          Live Capture
+        </button>
       </div>
       <div v-else>
         <img
@@ -29,41 +44,33 @@
           alt="Captured Image"
         />
       </div>
-      <div v-if="!coordinates">
-        <p>Loading...</p>
+      <div v-if="locationLoading">
+        <p>Loading location...</p>
       </div>
-      <div v-else>
+      <div v-else-if="coordinates">
         <p>Latitude: {{ coordinates.latitude }}</p>
         <p>Longitude: {{ coordinates.longitude }}</p>
       </div>
-      <button @click="nextStep">Next</button>
-    </div>
-    <div
-      class="step"
-      v-if="currentStep === 2"
-    >
-      <h1>Step 2 / 5</h1>
-      <h2>Mobile Number</h2>
-      <div class="input-group">
-        <label for="mobileNumber">Enter your mobile number</label>
-        <input
-          type="tel"
-          id="mobileNumber"
-          v-model="mobileNumber"
-          placeholder="+1 (555) 555-5555"
-        />
-        <span v-if="!isValidMobileNumber">Invalid mobile number</span>
+      <div v-else>
+        <p>Error loading location</p>
       </div>
-      <button @click="previousStep">Previous</button>
-      <button @click="nextStep">Next</button>
+      <div style="display: flex; justify-content: flex-end; margin-top: 20px">
+        <button
+          @click="nextStep"
+          style="
+            background-color: blue;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+          "
+        >
+          Next
+        </button>
+      </div>
     </div>
-    <div
-      class="step"
-      v-if="currentStep === 3"
-    >
-      <h1>Step 3 / 5</h1>
-      <p>Success! Your request has been submitted.</p>
-    </div>
+    <!-- Rest of your template -->
   </div>
 </template>
 
@@ -74,6 +81,7 @@ const video = ref<HTMLVideoElement | null>(null)
 const imageData = ref<string | null>(null)
 const currentStep = ref(1)
 const coordinates = ref<{ latitude: number; longitude: number } | null>(null)
+const locationLoading = ref(true)
 const mobileNumber = ref('')
 const isValidMobileNumber = ref(true)
 
@@ -100,19 +108,20 @@ const captureImage = () => {
   }
 }
 
-const getLocation = () => {
-  navigator.geolocation.getCurrentPosition(
-    position => {
-      coordinates.value = {
-        latitude: position.coords.latitude,
-        longitude: position.coords.longitude,
-      }
-    },
-    error => {
-      console.error('Error getting location:', error)
-    },
-    { enableHighAccuracy: true },
-  )
+const getLocation = async () => {
+  try {
+    const position = await new Promise((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(resolve, reject, { enableHighAccuracy: true })
+    })
+    coordinates.value = {
+      latitude: position.coords.latitude,
+      longitude: position.coords.longitude,
+    }
+  } catch (error) {
+    console.error('Error getting location:', error)
+  } finally {
+    locationLoading.value = false
+  }
 }
 
 const validateMobileNumber = () => {
@@ -121,9 +130,9 @@ const validateMobileNumber = () => {
   isValidMobileNumber.value = pattern.test(mobileNumber.value)
 }
 
-onMounted(() => {
-  initCamera()
-  getLocation()
+onMounted(async () => {
+  await initCamera()
+  await getLocation()
 })
 
 onUnmounted(() => {
@@ -143,51 +152,3 @@ function nextStep() {
   currentStep.value++
 }
 </script>
-
-<style scoped>
-.container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.step {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 300px;
-  padding: 20px;
-  border: 1px solid #ccc;
-  margin: 20px;
-}
-
-.input-group {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 10px;
-}
-
-.input-group label {
-  margin-bottom: 5px;
-}
-
-.input-group input {
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-button {
-  padding: 8px 16px;
-  border: none;
-  border-radius: 4px;
-  background-color: #4caf50;
-  color: white;
-  cursor: pointer;
-  margin: 10px;
-}
-
-button:hover {
-  background-color: #45a049;
-}
-</style>
