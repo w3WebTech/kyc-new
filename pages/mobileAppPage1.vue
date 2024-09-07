@@ -130,9 +130,9 @@ const validateMobileNumber = () => {
   isValidMobileNumber.value = pattern.test(mobileNumber.value)
 }
 
-onMounted(async () => {
-  await initCamera()
-  await getLocation()
+onMounted(() => {
+  initCamera()
+  getLocation()
 })
 
 onUnmounted(() => {
