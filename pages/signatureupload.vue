@@ -1,6 +1,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
-
+import { useCounterStore } from '~/stores/user'
+const counterStore = useCounterStore()
 export default defineComponent({
   data() {
     return {
@@ -28,6 +29,20 @@ export default defineComponent({
         reader.readAsDataURL(file)
       }
     },
+    proceed() {
+      this.increment()
+      this.$router.push('/segmentactivation')
+    },
+    increment() {
+      counterStore.increment()
+    },
+    navigateBack() {
+      this.decrement()
+      this.$router.push('/cameraaccess')
+    },
+    decrement() {
+      counterStore.decrement()
+    },
   },
   mounted() {
     this.fileInput = this.$refs.fileInput as HTMLInputElement
@@ -41,41 +56,54 @@ export default defineComponent({
       cols="12"
       md="6"
     >
-      <VCard>
-        <VCol class="py-1">Signature</VCol>
-        <VCol class="font-bold text-lg py-1">Add Your Signature</VCol>
-        <VCol class="py-1">Your SIgnature is required to securely open your demat account</VCol>
-        <VCol
-          cols="12"
-          class=""
-        >
-          <div class="border border-gray rounded-md h-40">
-            <VCol @click="openFileInput">
-              <div>Draw your sign in this box...</div>
-            </VCol>
-            <input
-              type="file"
-              ref="fileInput"
-              id="fileInput"
-              @change="handleFileUpload"
-              hidden
-            />
-          </div>
-        </VCol>
+      <VCol class="py-1">Signature</VCol>
+      <VCol class="font-bold text-lg py-1">Add Your Signature</VCol>
+      <VCol class="py-1">Your SIgnature is required to securely open your demat account</VCol>
+      <VCol
+        cols="12"
+        class=""
+      >
+        <div class="border border-gray rounded-md h-40">
+          <VCol @click="openFileInput">
+            <div>Draw your sign in this box...</div>
+          </VCol>
+          <input
+            type="file"
+            ref="fileInput"
+            id="fileInput"
+            @change="handleFileUpload"
+            hidden
+          />
+        </div>
+      </VCol>
 
-        <VCol
-          cols="12"
-          class="pt-10"
-        >
-          <VBtn
-            block
-            type="submit"
-            to="/segmentactivation"
-          >
-            PROCEED
-          </VBtn>
-        </VCol>
-      </VCard>
+      <VCol
+        class="fixed bottom-0"
+        cols="12"
+      >
+        <VRow>
+          <VCol cols="5">
+            <VBtn
+              class="w-full"
+              color="secondary"
+              type="reset"
+              variant="outlined"
+              @click="navigateBack"
+            >
+              BACK
+            </VBtn>
+          </VCol>
+          <VCol cols="7">
+            <VBtn
+              class="w-[80%]"
+              type="submit"
+              @click="proceed"
+            >
+              PROCEED
+            </VBtn>
+          </VCol>
+        </VRow>
+      </VCol>
     </VCol></VRow
   >
 </template>

@@ -1,4 +1,5 @@
 <script lang="ts" >
+import { mapState } from 'vuex'
 export default {
   data() {
     return {
@@ -16,10 +17,7 @@ export default {
       otp6: null,
     }
   },
-  mounted() {
-    this.startOtpTimer()
-    this.otp6 == '6' ?? this.$router.push('/mainpage')
-  },
+
   methods: {
     validateEmail() {
       const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
@@ -27,17 +25,10 @@ export default {
       if (this.isValidEmail == false) {
         this.isError = true
       } else {
-        this.$router.push('/verification')
+        this.$router.push('Verification')
       }
     },
-    validateMobileNumber(): any {
-      const mobileNumberRegex = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/
-      console.log(mobileNumberRegex.test(this.mobileNumber), 'valid')
-      this.isMobileNumberValid = mobileNumberRegex.test(this.mobileNumber)
-      if (this.isMobileNumberValid == true) {
-        this.$router.push('/otp')
-      }
-    },
+
     startOtpTimer() {
       this.otpTimer = 30 // set timer to 60 seconds
       this.otpInterval = setInterval(() => {
@@ -48,6 +39,12 @@ export default {
       }, 1000)
     },
   },
+
+  mounted() {
+    this.startOtpTimer()
+    this.otp6 == '6' ?? this.$router.push('/addEmail')
+    debugger
+  },
 }
 </script>
 
@@ -57,51 +54,67 @@ export default {
       cols="12"
       md="6"
     >
-      <VCard>
-        <VRow class="py-4 px-2">
-          <VCol
-            cols="3"
-            md="2"
-            class="px-6"
-          >
-            <img
-              src="@images/phonepay.png"
-              alt=""
-              class="h-10 w-10"
-          /></VCol>
-          <VCol
-            cols="1"
-            md="1"
-            class="px-6"
-          >
-            <IconBtn class="">
-              <VIcon icon="ri-arrow-right-line" />
-            </IconBtn>
-          </VCol>
-          <VCol
-            cols="4"
-            md="2"
-            class="px-6"
-          >
-            <img
-              src="@/public/download.png"
-              alt=""
-              class="h-10 w-10"
-          /></VCol>
-        </VRow>
-        <VCol class="font-bold text-lg text-black px-5">Verify Your Mobile number</VCol>
-
+      <div>{{ value }}</div>
+      <VRow class="py-4 px-2">
         <VCol
-          cols="12"
-          class="px-5"
+          cols="3"
+          md="2"
+          class="px-6"
         >
-          We need to verify your phonepe accountId proceed</VCol
+          <img
+            src="@images/phonepay.png"
+            alt=""
+            class="h-10 w-10"
+        /></VCol>
+        <VCol
+          cols="1"
+          md="1"
+          class="px-6"
         >
-        <VCol class="font-bold text-black px-5"> Enter OTP Send to 6374586149</VCol>
-        <VCol cols="12">
-          <OtpInput />
-        </VCol> </VCard></VCol
-  ></VRow>
+          <IconBtn class="">
+            <VIcon icon="ri-arrow-right-line" />
+          </IconBtn>
+        </VCol>
+        <VCol
+          cols="4"
+          md="2"
+          class="px-6"
+        >
+          <img
+            src="@/public/download.png"
+            alt=""
+            class="h-10 w-10"
+        /></VCol>
+      </VRow>
+      <VCol class="font-bold text-lg text-black px-5">Verify Your Mobile number</VCol>
+
+      <VCol
+        cols="12"
+        class="px-5"
+      >
+        We need to verify your phonepe accountId proceed</VCol
+      >
+      <VCol class="font-bold text-black px-5"> Enter OTP Send to 6374586149</VCol>
+      <VCol
+        cols="12"
+        class="px-5"
+      >
+        <OtpInput />
+      </VCol>
+
+      <VRow>
+        <VCol cols="2">
+          <VProgressLinear
+            indeterminate
+            color="primary"
+            class="py-1 rounded-md my-6 mx-6"
+        /></VCol>
+        <VCol cols="10"
+          ><div class="px-4 py-4">auto-reading OTP in {{ otpTimer }} seconds</div></VCol
+        >
+      </VRow>
+    </VCol></VRow
+  >
 </template>
 <style lang="scss">
 </style>

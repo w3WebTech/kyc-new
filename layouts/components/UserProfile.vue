@@ -1,5 +1,22 @@
 <script setup lang="ts">
 import avatar1 from '@images/avatars/avatar-1.png'
+import { userDataStore } from '~/stores/tableData'
+import { useRouter } from 'vue-router'
+const router = useRouter()
+const userStore = userDataStore()
+const userName = userStore.userId
+const routeCheck = () => {
+  const userId = userStore.userId
+  const password = userStore.password
+  console.log(userId, password, 'password')
+
+  if (userId != '' && password != '' && userId != undefined && password != undefined) {
+    userStore.removeUser()
+    router.push('/login')
+  } else {
+    alert('Login Credentials Not Available')
+  }
+}
 </script>
 
 <template>
@@ -47,68 +64,13 @@ import avatar1 from '@images/avatars/avatar-1.png'
               </VListItemAction>
             </template>
 
-            <VListItemTitle class="font-weight-semibold"> John Doe </VListItemTitle>
+            <VListItemTitle class="font-weight-semibold"> {{ userName ? userName : 'UNKNOWN' }} </VListItemTitle>
             <VListItemSubtitle>Admin</VListItemSubtitle>
           </VListItem>
           <VDivider class="my-2" />
 
-          <!-- 👉 Profile -->
-          <VListItem link>
-            <template #prepend>
-              <VIcon
-                class="me-2"
-                icon="ri-user-line"
-                size="22"
-              />
-            </template>
-
-            <VListItemTitle>Profile</VListItemTitle>
-          </VListItem>
-
-          <!-- 👉 Settings -->
-          <VListItem link>
-            <template #prepend>
-              <VIcon
-                class="me-2"
-                icon="ri-settings-4-line"
-                size="22"
-              />
-            </template>
-
-            <VListItemTitle>Settings</VListItemTitle>
-          </VListItem>
-
-          <!-- 👉 Pricing -->
-          <VListItem link>
-            <template #prepend>
-              <VIcon
-                class="me-2"
-                icon="ri-money-dollar-circle-line"
-                size="22"
-              />
-            </template>
-
-            <VListItemTitle>Pricing</VListItemTitle>
-          </VListItem>
-
-          <!-- 👉 FAQ -->
-          <VListItem link>
-            <template #prepend>
-              <VIcon
-                class="me-2"
-                icon="ri-question-line"
-                size="22"
-              />
-            </template>
-
-            <VListItemTitle>FAQ</VListItemTitle>
-          </VListItem>
-
-          <!-- Divider -->
-          <VDivider class="my-2" />
-
           <!-- 👉 Logout -->
-          <VListItem to="/login">
+          <VListItem @click="routeCheck">
             <template #prepend>
               <VIcon
                 class="me-2"

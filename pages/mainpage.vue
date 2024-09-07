@@ -10,7 +10,7 @@ export default {
 
       solidCardData: [
         {
-          cardBg: '#8C57FF',
+          cardBg: 'primary',
           title: 'Facebook Card',
           icon: 'ri-facebook-circle-line',
           text: "You've read about the importance of being courageous, rebellious and imaginative. These are all vital ingredients.",
@@ -29,7 +29,7 @@ export default {
       if (this.isValidEmail == false) {
         this.isError = true
       } else {
-        this.$router.push('/verification')
+        this.$router.push('/Verification')
       }
     },
     validateMobileNumber(): any {
@@ -51,9 +51,9 @@ export default {
       md="6"
     >
       <VCol class="py-1">
-        <span class="text-[#8C57FF] font-bold text-2xl pr-1"> Share</span>
+        <span class="text-primary font-bold text-2xl pr-1"> Share</span>
         <span class="text-3xl font-bold text-success">.</span>
-        <span class="text-[#8C57FF] font-bold text-2xl px-2">Market</span></VCol
+        <span class="text-primary font-bold text-2xl px-2">Market</span></VCol
       >
       <VCol class="font-bold text-lg text-black py-1"
         >Open Your Free Demat & <br />
@@ -83,7 +83,7 @@ export default {
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
-              fill="#8C57FF"
+              fill="#2B58A3"
               class="h-5 w-5"
             >
               <path
@@ -96,7 +96,7 @@ export default {
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
-              fill="#8C57FF"
+              fill="#2B58A3"
               class="h-7 w-7"
             >
               <path
@@ -109,7 +109,7 @@ export default {
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
-              fill="#8C57FF"
+              fill="#2B58A3"
               class="h-5 w-5"
             >
               <path

@@ -1,17 +1,19 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
-
+import { useCounterStore } from '~/stores/user'
+const counterStore = useCounterStore()
 export default defineComponent({
   data() {
     return {}
   },
-  methods: {},
+
   setup() {
     const router = useRouter()
 
     // Automatically navigate to the next page after 10 seconds
     const redirectToNextPage = () => {
       setTimeout(() => {
+        counterStore.increment()
         router.push('/kycdetails')
       }, 5000)
     }
@@ -25,6 +27,7 @@ export default defineComponent({
       this.redirectToNextPage()
     })
   },
+  methods: {},
 })
 </script>
 
@@ -35,7 +38,7 @@ export default defineComponent({
       md="6"
       class=""
     >
-      <VCard class="d-flex justify-center items-center text-center my-20">
+      <div class="d-flex justify-center items-center text-center my-20">
         <VCol>
           <VCol class="d-flex justify-center items-center text-center">
             <svg
@@ -52,7 +55,7 @@ export default defineComponent({
           <VCol class="font-bold text-lg py-1">Received Your Documents</VCol>
           <VCol>Proceeding to the next step ...</VCol>
         </VCol>
-      </VCard>
+      </div>
     </VCol></VRow
   >
 </template>

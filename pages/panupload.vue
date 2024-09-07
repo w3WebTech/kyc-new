@@ -28,6 +28,9 @@ export default defineComponent({
         reader.readAsDataURL(file)
       }
     },
+    navigateBack() {
+      this.$router.push('/pandetails')
+    },
   },
   mounted() {
     this.fileInput = this.$refs.fileInput as HTMLInputElement
@@ -86,25 +89,38 @@ export default defineComponent({
           Please click a horizontal photo of the PAN card and ensure that your name and PAN number are clearly visible.
         </VAlert>
       </VCol>
+
       <VCol
+        class="fixed bottom-0"
         cols="12"
-        class=""
       >
-        <VBtn
-          block
-          type="submit"
-          @click="isDialogVisible = true"
-        >
-          PROCEED
-        </VBtn>
+        <VRow>
+          <VCol cols="5">
+            <VBtn
+              class="w-full"
+              color="secondary"
+              type="reset"
+              variant="outlined"
+              @click="navigateBack"
+            >
+              BACK
+            </VBtn>
+          </VCol>
+          <VCol cols="7">
+            <VBtn
+              class="w-[80%]"
+              type="submit"
+              @click="isDialogVisible = true"
+            >
+              PROCEED
+            </VBtn>
+          </VCol>
+        </VRow>
       </VCol>
 
-      <VDialog
-        v-model="isDialogVisible"
-        width="500"
-      >
+      <VDialog v-model="isDialogVisible">
         <!-- Dialog Content -->
-        <VCard>
+        <VCard class="absolute mx-10">
           <DialogCloseBtn
             variant="text"
             size="default"
@@ -146,10 +162,28 @@ export default defineComponent({
   >
 </template>
 
-<style lang="scss">
+<style lang="scss" >
 .v-alert__content {
   font-size: 12px !important;
   font-weight: 200 !important;
   line-height: 15px !important;
+}
+.v-dialog .v-overlay__content {
+  height: 30% !important;
+
+  position: absolute !important;
+  margin: 0 !important;
+  bottom: 0 !important;
+  width: 100% !important;
+  max-width: none !important;
+}
+.padding {
+  padding-top: 80px !important;
+  padding-bottom: 80px !important;
+}
+.v-dialog > .v-overlay__content {
+  height: 50% !important;
+  width: 100% !important;
+  max-width: none !important;
 }
 </style>

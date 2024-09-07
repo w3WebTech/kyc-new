@@ -1,40 +1,53 @@
 <template>
-  <div
-    id="app"
-    class="container mx-auto p-4"
-  >
-    <!-- Existing code here -->
+  <!-- Existing code here -->
 
-    <div v-if="imageData">
+  <!-- <div v-if="imageData">
       <img
         :src="imageData"
         alt=""
       />
-    </div>
-    <div
-      class="row"
-      v-else
+    </div> -->
+
+  <VRow>
+    <VCol
+      cols="12"
+      md="6"
     >
-      <div class="col-sm w-full">
-        <video
-          ref="video"
-          autoplay
-          class="w-full"
-          style="max-width: 100%"
-        ></video>
-        <!-- Add button to capture image -->
-        <button
-          class="btn btn-primary w-full bg-blue-500 text-white py-2 px-4 rounded mb-2"
-          :disabled="active"
-          type="button"
-          @click="captureImage"
+      <VCol class="d-flex justify-center items-center">
+        <div>
+          <video
+            ref="video"
+            autoplay
+            class="rounded-full"
+            style="width: 200px; height: 200px; object-fit: cover"
+          ></video>
+        </div>
+      </VCol>
+
+      <VCol
+        cols="12"
+        class=""
+      >
+        <VBtn
+          block
+          color="secondary"
+          type="reset"
+          variant="outlined"
+          >BACK</VBtn
         >
-          Capture Image
-        </button>
-      </div>
-    </div>
-    <!-- Existing code here -->
-  </div>
+      </VCol>
+      <VCol cols="12">
+        <VBtn
+          block
+          type="submit"
+          @click="captureImage"
+          >PROCEED</VBtn
+        >
+      </VCol>
+    </VCol>
+  </VRow>
+
+  <!-- Existing code here -->
 </template>
 
 <script setup lang="ts">
@@ -79,3 +92,4 @@ onUnmounted(() => {
   }
 })
 </script>
+ 

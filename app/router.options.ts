@@ -9,5 +9,12 @@ export default <RouterConfig> {
       name: 'index',
       redirect: '/mobileAppPage1',
     },
+    {
+      path: '/tableData',
+      name: '',
+      redirect: '/tableData',
+    },
+ 
+
   ],
 }

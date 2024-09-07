@@ -1,4 +1,6 @@
 <script lang="ts" >
+import { useCounterStore } from '~/stores/user'
+const counterStore = useCounterStore()
 export default {
   data() {
     return {
@@ -7,18 +9,6 @@ export default {
       checkbox1: false,
       isDialogVisible: false,
       emailErrors: [],
-      solidCardData: [
-        {
-          cardBg: '#8C57FF',
-          title: 'Facebook Card',
-          icon: 'ri-facebook-circle-line',
-          text: "You've read about the importance of being courageous, rebellious and imaginative. These are all vital ingredients.",
-
-          avatarName: 'Eugene Clarke',
-          likes: '3.2k',
-          share: '49',
-        },
-      ],
     }
   },
   methods: {
@@ -29,8 +19,18 @@ export default {
         this.emailErrors.push('enter PAN Number')
       }
     },
-    open() {},
+    navigateBack() {
+      this.decrement()
+      this.$router.push('/mainpage-2')
+    },
+    decrement() {
+      counterStore.decrement()
+    },
+    increment() {
+      counterStore.increment()
+    },
   },
+  mounted() {},
 }
 </script>
 
@@ -65,7 +65,7 @@ export default {
       </VCol>
       <VCol class="">
         <VRow cols="12">
-          <VCol cols="1"> <VCheckbox v-model="this.checkbox" /></VCol>
+          <VCol cols="1"> <VCheckbox v-model="checkbox" /></VCol>
           <VCol
             cols="11"
             class="mt-2 text-justify"
@@ -76,7 +76,7 @@ export default {
       </VCol>
       <VCol class="">
         <VRow cols="12">
-          <VCol cols="1"> <VCheckbox v-model="this.checkbox1" /></VCol>
+          <VCol cols="1"> <VCheckbox v-model="checkbox1" /></VCol>
           <VCol
             cols="11"
             class="mt-2 text-justify"
@@ -86,22 +86,34 @@ export default {
       </VCol>
 
       <VCol
+        class="fixed bottom-0"
         cols="12"
-        class="pt-5"
       >
-        <VBtn
-          block
-          type="submit"
-          @click="proceed"
-        >
-          PROCEED
-        </VBtn>
+        <VRow>
+          <VCol cols="5">
+            <VBtn
+              class="w-full"
+              color="secondary"
+              type="reset"
+              variant="outlined"
+              @click="navigateBack"
+            >
+              BACK
+            </VBtn>
+          </VCol>
+          <VCol cols="7">
+            <VBtn
+              class="w-[80%]"
+              type="submit"
+              @click="proceed"
+            >
+              PROCEED
+            </VBtn>
+          </VCol>
+        </VRow>
       </VCol>
-      <VDialog
-        v-model="isDialogVisible"
-        width="500"
-      >
-        <VCard class="py-3">
+      <VDialog v-model="isDialogVisible">
+        <VCard class="padding absolute">
           <VCol class="text-xl font-bold text-black d-flex justify-center py-1">Proceed With PAN</VCol>
           <VCol class="text-xl font-bold text-black d-flex justify-center py-1">AURTDDSJ3243VNDSF</VCol>
 
@@ -109,7 +121,7 @@ export default {
             Lorem ipsum dolor sit amet consectetur, adipisicing elit. Cum minus animi blanditiis sit quae quod expedita
             totam rerum, magnam iste nam, accusantium officiis quis quaerat iure ea voluptatibus dignissimos nisi!
           </VCol>
-          <VCol cols="12">
+          <VCol>
             <VBtn
               block
               type="submit"
@@ -119,10 +131,7 @@ export default {
             </VBtn>
           </VCol>
 
-          <VCol
-            cols="12"
-            class="pb-12"
-          >
+          <VCol class="">
             <VBtn
               block
               color="secondary"
@@ -137,12 +146,25 @@ export default {
     </VCol>
   </VRow>
 </template>
-<style lang="scss">
-// .v-card {
-//   position: absolute !important;
-//   top: 0 !important;
-// }
-// .v-dialog .v-overlay__content {
-//   max-width: 100% !important;
-// }
+<style  >
+.v-dialog .v-overlay__content {
+  height: 40% !important;
+
+  position: absolute !important;
+  margin: 0 !important;
+  bottom: 0 !important;
+  width: 100% !important;
+  max-width: none !important;
+}
+.padding {
+  padding-top: 80px !important;
+  padding-bottom: 80px !important;
+}
+.v-dialog > .v-overlay__content {
+  height: 50% !important;
+  width: 100% !important;
+  max-width: none !important;
+}
 </style>
+
+

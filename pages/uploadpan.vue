@@ -29,7 +29,7 @@ export default {
       if (this.isValidEmail == false) {
         this.isError = true
       } else {
-        this.$router.push('/verification')
+        this.$router.push('/Verification')
       }
     },
     validateMobileNumber(): any {

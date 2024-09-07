@@ -1,4 +1,6 @@
 <script lang="ts" >
+import { useCounterStore } from '~/stores/user'
+const counterStore = useCounterStore()
 export default {
   data() {
     return {
@@ -7,38 +9,20 @@ export default {
       isError: false,
       isMobileNumberValid: false,
       mobileNumber: '',
-
-      solidCardData: [
-        {
-          cardBg: '#8C57FF',
-          title: 'Facebook Card',
-          icon: 'ri-facebook-circle-line',
-          text: "You've read about the importance of being courageous, rebellious and imaginative. These are all vital ingredients.",
-
-          avatarName: 'Eugene Clarke',
-          likes: '3.2k',
-          share: '49',
-        },
-      ],
+      counter: counterStore.count,
     }
   },
   methods: {
-    validateEmail() {
-      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
-      this.isValidEmail = emailRegex.test(this.emailAddress)
-      if (this.isValidEmail == false) {
-        this.isError = true
-      } else {
-        this.$router.push('/verification')
-      }
+    proceed() {
+      this.increment()
+
+      this.$router.push('/pandetails')
     },
-    validateMobileNumber(): any {
-      const mobileNumberRegex = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/
-      console.log(mobileNumberRegex.test(this.mobileNumber), 'valid')
-      this.isMobileNumberValid = mobileNumberRegex.test(this.mobileNumber)
-      if (this.isMobileNumberValid == true) {
-        this.$router.push('/otp')
-      }
+    navigateBack() {
+      this.$router.push('/addEmail')
+    },
+    increment() {
+      counterStore.increment()
     },
   },
 }
@@ -126,17 +110,44 @@ export default {
       </svg>
       <span class="ms-3">Bank Account number and IFSC </span>
     </div>
+
     <VCol
+      class="fixed bottom-0"
       cols="12"
-      class="px-5 pt-10"
     >
-      <VBtn
-        block
-        type="submit"
-        to="/pandetails"
-      >
-        OPEN ACCOUNT
-      </VBtn>
+      <VRow>
+        <VCol cols="2">
+          <VBtn
+            class="w-full"
+            color="secondary"
+            type="reset"
+            variant="outlined"
+            @click="navigateBack"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="black"
+              class="size-6"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M11.03 3.97a.75.75 0 0 1 0 1.06l-6.22 6.22H21a.75.75 0 0 1 0 1.5H4.81l6.22 6.22a.75.75 0 1 1-1.06 1.06l-7.5-7.5a.75.75 0 0 1 0-1.06l7.5-7.5a.75.75 0 0 1 1.06 0Z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </VBtn>
+        </VCol>
+        <VCol cols="10">
+          <VBtn
+            class="w-[80%]"
+            type="submit"
+            @click="proceed"
+          >
+            OPEN ACCOUNT
+          </VBtn>
+        </VCol>
+      </VRow>
     </VCol>
   </VRow>
 </template>

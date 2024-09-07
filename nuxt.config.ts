@@ -1,13 +1,13 @@
-import { fileURLToPath } from 'node:url'
-import vuetify from 'vite-plugin-vuetify'
-import svgLoader from 'vite-svg-loader'
+import { fileURLToPath } from 'node:url';
+import vuetify from 'vite-plugin-vuetify';
+import svgLoader from 'vite-svg-loader';
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   app: {
     head: {
-      titleTemplate: '%s - NuxtJS Admin Template',
-      title: 'Materio',
+      titleTemplate: '%s - Admin',
+      title: 'PowerStocks',
 
       link: [{
         rel: 'icon',
@@ -45,10 +45,12 @@ export default defineNuxtConfig({
 
   plugins: ['@/plugins/vuetify/index.ts',
     '@/plugins/iconify/index.ts',
-    '~/plugins/preline.client.ts'],
+    '~/plugins/preline.client.ts',
+       '~/plugins/flatpickr.ts'
+    ],
 
   imports: {
-    dirs: ['./@core/utils', './@core/composable/', './plugins/*/composables/*'],
+    dirs: ['./@core/utils', './@core/composable/', './plugins/*/composables/*','./stores'],
     presets: [],
   },
 
@@ -97,6 +99,7 @@ export default defineNuxtConfig({
         '@images': fileURLToPath(new URL('./assets/images/', import.meta.url)),
         '@styles': fileURLToPath(new URL('./assets/styles/', import.meta.url)),
         '@configured-variables': fileURLToPath(new URL('./assets/styles/variables/_template.scss', import.meta.url)),
+        '@store':  fileURLToPath(new URL('./store', import.meta.url)),
       },
     },
 
@@ -119,7 +122,7 @@ export default defineNuxtConfig({
           configFile: 'assets/styles/variables/_vuetify.scss',
         },
       }),
-      null,
+   
     ],
   },
 
@@ -128,6 +131,12 @@ export default defineNuxtConfig({
   },
 
   modules: ['@vueuse/nuxt', '@nuxtjs/device', '@pinia/nuxt', '@nuxtjs/tailwindcss'],
- 
+  pinia:{autoImports:["defineStore"]},
+  buildModules: [
+    '@nuxt/typescript-build',
+    '@nuxtjs/tailwindcss', // Add other modules as needed
+    'pinia/nuxt', // Register Pinia as a build module
+  ],
+
 
 })

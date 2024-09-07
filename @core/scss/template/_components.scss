@@ -162,7 +162,7 @@ body {
         @each $color-name in variables.$theme-colors-name {
           &.bg-#{$color-name}{
             &:hover, &:active, &:focus {
-              background-color: rgb(var(--v-theme-#{$color-name}-darken-1)) !important;
+              background-color: rgb(var(--v-theme-#{$color-name})) !important;
             }
           }
         }
@@ -609,6 +609,9 @@ body {
 
   // 👉 Dialog
   .v-dialog{
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
     font-size: .9375rem;
     line-height: 1.375rem;
 

@@ -17,7 +17,7 @@ export default {
       if (this.isValidEmail == false) {
         this.isError = true
       } else {
-        this.$router.push('/verification')
+        this.$router.push('/Verification')
       }
     },
     validateMobileNumber(): any {
@@ -25,7 +25,8 @@ export default {
       console.log(mobileNumberRegex.test(this.mobileNumber), 'valid')
       this.isMobileNumberValid = mobileNumberRegex.test(this.mobileNumber)
       if (this.isMobileNumberValid == true) {
-        this.$router.push('/otp')
+        // this.$router.push('/FirstStep-2')
+        this.$emit('next-page', 'FirstStep-2')
       } else {
         this.emailErrors.push('Enter valid Number')
       }
