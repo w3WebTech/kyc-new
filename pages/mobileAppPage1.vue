@@ -1,91 +1,58 @@
 <template>
-  <div class="border boder-2 rounded-md p-5">
-    <div
-      class="step"
-      v-if="currentStep === 1"
-    >
-      <h1
-        style="
-          color: black;
+  <div class="p-4 rounded-md shadow-md bg-white">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-xl font-bold">A101</h2>
+    </div>
+    <div class="mb-4">
+      <h3 class="text-lg font-medium mb-2">Finy Wealth</h3>
+      <p class="text-gray-600">Andhra Pradesh</p>
+      <p class="text-gray-600">
+        GPS {{ coordinates ? `${coordinates.latitude}, ${coordinates.longitude}` : 'Unable to get location' }}
+      </p>
+    </div>
+    <VDivider />
+    <div class="mb-4">
+      <h4 class="text-lg font-medium mb-2">Step 1:</h4>
+      <p class="text-gray-600">Please take a live photo of Name</p>
 
-          border: none;
-          border-radius: 4px;
+      <div class="w-full border rounded h-20 py-4">
+        <div class="flex justify-center items-center">
+          <img
+            src="@/public/picture.png"
+            alt=""
+            class="h-10 w-10"
+          />
+        </div>
 
-          padding: 3px;
-          font: bold;
-        "
-        class="flex justify-center"
-      >
-        Step 1 / 5
-      </h1>
-      <div>
-        <VTextField
-          v-model="apCode"
-          label="Code "
-          required
-          class="py-2"
-          width="300"
-        ></VTextField>
-      </div>
-      <div v-if="!imageData">
-        <video
-          ref="video"
-          width="300"
-          height="200"
-          autoplay
-        ></video>
-        <button
+        <div
+          class="flex justify-center items-center"
           @click="captureImage"
-          width="300"
-          style="
-            background-color: blue;
-            color: white;
-            width: 280px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            padding: 3px;
-            text: bold;
-          "
         >
           Live Capture
-        </button>
-      </div>
-      <div v-else>
-        <img
-          :src="imageData"
-          alt="Captured Image"
-        />
-      </div>
-      <div v-if="locationLoading">
-        <p>Loading location...</p>
-      </div>
-      <div v-else-if="coordinates">
-        <p>Latitude: {{ coordinates.latitude }}</p>
-        <p>Longitude: {{ coordinates.longitude }}</p>
-      </div>
-      <div v-else>
-        <p></p>
-      </div>
-      <div style="display: flex; justify-content: flex-end; margin-top: 20px">
-        <button
-          @click="nextStep"
-          style="
-            background-color: blue;
-            color: white;
-            padding: 8px 16px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-          "
-        >
-          Next
-        </button>
+        </div>
       </div>
     </div>
-    <!-- Rest of your template -->
+    <div class="mb-4">
+      <label
+        for="message"
+        class="block text-gray-700 font-bold mb-2"
+        >Optional Message / Notes</label
+      >
+      <textarea
+        id="message"
+        rows="4"
+        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+      ></textarea>
+    </div>
+    <div class="flex justify-end">
+      <button class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded mr-4">← Previous</button>
+      <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Next →</button>
+    </div>
   </div>
 </template>
+
+
+
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
@@ -97,6 +64,9 @@ const coordinates = ref<{ latitude: number; longitude: number } | null>(null)
 const locationLoading = ref(true)
 const mobileNumber = ref('')
 const isValidMobileNumber = ref(true)
+const name = ref('')
+const address = ref('')
+const notes = ref('')
 
 const initCamera = async () => {
   try {
@@ -107,17 +77,6 @@ const initCamera = async () => {
   } catch (error) {
     console.error('Error accessing camera:', error)
     // Handle error here
-  }
-}
-
-const captureImage = () => {
-  const canvas = document.createElement('canvas')
-  if (video.value) {
-    canvas.width = video.value.videoWidth
-    canvas.height = video.value.videoHeight
-    canvas.getContext('2d')?.drawImage(video.value, 0, 0, canvas.width, canvas.height)
-    imageData.value = canvas.toDataURL('image/png')
-    console.log('Captured image data:', imageData.value)
   }
 }
 
@@ -139,6 +98,16 @@ const getLocation = async () => {
     )
   } catch (error) {
     console.error('Error getting location:', error)
+  }
+}
+const captureImage = () => {
+  const canvas = document.createElement('canvas')
+  if (video.value) {
+    canvas.width = video.value.videoWidth
+    canvas.height = video.value.videoHeight
+    canvas.getContext('2d')?.drawImage(video.value, 0, 0, canvas.width, canvas.height)
+    capturedImage.value = canvas.toDataURL('image/png')
+    console.log('Captured image data:', capturedImage.value)
   }
 }
 
@@ -169,4 +138,27 @@ function previousStep() {
 function nextStep() {
   currentStep.value++
 }
+
+function submit() {
+  // Here you would send the collected data to your backend
+  console.log('Collected data:', {
+    apCode: apCode.value,
+    imageData: imageData.value,
+    coordinates: coordinates.value,
+    mobileNumber: mobileNumber.value,
+    name: name.value,
+    address: address.value,
+    notes: notes.value,
+  })
+}
 </script>
+
+<style scoped>
+.step {
+  display: none;
+}
+
+.step.active {
+  display: block;
+}
+</style>
