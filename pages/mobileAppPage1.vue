@@ -16,7 +16,7 @@
       <h4 class="text-lg text-blue-900 font-medium mb-2">Step 1:</h4>
       <p class="text-gray-600">Please take a live photo of Name</p>
 
-      <div class="w-full border-dotted border-2 rounded h-64 relative">
+      <div class="w-full border-dotted border-2 rounded h-60 relative">
         <!-- Show picture image initially -->
         <div
           class="absolute inset-0 flex flex-col justify-center items-center py-20"
@@ -59,7 +59,7 @@
       >
         <button
           @click="captureImage"
-          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          class="bg-blue-900 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
         >
           Capture
         </button>
@@ -68,7 +68,7 @@
     <div class="p-3">
       <textarea
         id="message"
-        rows="4"
+        rows="3"
         v-model="notes"
         placeholder="  Optional Message / Notes"
         class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
