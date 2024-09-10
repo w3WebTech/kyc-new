@@ -8,12 +8,12 @@ import VerticalNavLink from '@layouts/components/VerticalNavLink.vue'
 
   <VerticalNavLink
     :item="{
-      title: 'Dashboard',
-      to: '/dashboard',
+      title: 'Inspection',
+      to: '/mobileAppPage1',
     }"
   />
 
-  <VerticalNavLink
+  <!-- <VerticalNavLink
     :item="{
       title: 'Progress',
       icon: 'ri-table-alt-line',
@@ -50,7 +50,7 @@ import VerticalNavLink from '@layouts/components/VerticalNavLink.vue'
       icon: 'ri-shopping-cart-2-line',
       to: '/placeOrder',
     }"
-  />
+  /> -->
 </template>
 
 

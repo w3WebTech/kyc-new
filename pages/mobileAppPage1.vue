@@ -46,7 +46,6 @@
         <img
           v-if="capturedImage"
           :src="capturedImage"
-          alt="Captured"
           class="absolute inset-0 w-full h-full object-cover"
           @click="toggleCamera"
         />
