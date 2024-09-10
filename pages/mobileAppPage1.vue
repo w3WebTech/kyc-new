@@ -112,17 +112,42 @@ const videoLoaded = () => {
 const toggleCamera = () => {
   showCamera.value = !showCamera.value
   console.log(showCamera.value, 'showCamera.value')
+  if (showCamera.value) {
+    initCamera()
+  }
 }
 
 const initCamera = async () => {
   try {
+    console.log('Initializing camera...')
     const stream = await navigator.mediaDevices.getUserMedia({ video: true })
+    console.log('Got stream:', stream)
     if (video.value) {
       video.value.srcObject = stream
       video.value.play()
+    } else {
+      console.error('Video element is null')
     }
   } catch (error) {
     console.error('Error accessing camera:', error)
+  }
+}
+
+const captureImage = () => {
+  const canvas = document.createElement('canvas')
+  if (video.value) {
+    canvas.width = video.value.videoWidth
+    canvas.height = video.value.videoHeight
+    const context = canvas.getContext('2d')
+    if (context) {
+      context.drawImage(video.value, 0, 0, canvas.width, canvas.height)
+      capturedImage.value = canvas.toDataURL('image/png')
+      showCamera.value = false
+    } else {
+      console.error('Canvas context is null')
+    }
+  } else {
+    console.error('Video element is null')
   }
 }
 
@@ -144,20 +169,6 @@ const getLocation = async () => {
     )
   } catch (error) {
     console.error('Error getting location:', error)
-  }
-}
-
-const captureImage = () => {
-  const canvas = document.createElement('canvas')
-  if (video.value) {
-    canvas.width = video.value.videoWidth
-    canvas.height = video.value.videoHeight
-    const context = canvas.getContext('2d')
-    if (context) {
-      context.drawImage(video.value, 0, 0, canvas.width, canvas.height)
-      capturedImage.value = canvas.toDataURL('image/png')
-      showCamera.value = false
-    }
   }
 }
 
