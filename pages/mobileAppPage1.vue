@@ -32,7 +32,6 @@
         </div>
 
         <!-- Live Camera Feed -->
-
         <video
           ref="video"
           autoplay
@@ -40,7 +39,15 @@
           v-if="showCamera"
           class="absolute inset-0 w-full h-full object-cover"
           @loadedmetadata="videoLoaded"
-        ></video>
+        >
+          <!-- Camera switch button -->
+          <button
+            @click="switchCamera"
+            class="absolute top-2 right-2 bg-gray-500 hover:bg-gray-700 text-white font-bold py-1 px-2 rounded"
+          >
+            Switch Camera
+          </button>
+        </video>
 
         <!-- Captured Image -->
         <img
@@ -49,19 +56,6 @@
           class="absolute inset-0 w-full h-full object-cover"
           @click="toggleCamera"
         />
-      </div>
-
-      <!-- Capture button only shown when live camera feed is displayed -->
-      <div
-        v-if="showCamera"
-        class="flex justify-center mt-4"
-      >
-        <button
-          @click="captureImage"
-          class="bg-blue-900 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        >
-          Capture
-        </button>
       </div>
     </div>
     <div class="p-3">
