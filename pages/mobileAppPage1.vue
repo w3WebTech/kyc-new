@@ -15,7 +15,10 @@
       <h4 class="text-lg font-medium mb-2">Step 1:</h4>
       <p class="text-gray-600">Please take a live photo of Name</p>
 
-      <div class="w-full border rounded h-64 py-4 relative">
+      <div
+        class="w-full border rounded h-64 py-4 relative"
+        v-if="showCamera"
+      >
         <!-- Live Camera Feed -->
         <video
           ref="video"
@@ -24,22 +27,34 @@
           class="absolute inset-0 w-full h-full object-cover"
         ></video>
 
-        <!-- Captured Image -->
-        <img
-          v-if="capturedImage"
-          :src="capturedImage"
-          alt="Captured"
-          class="absolute inset-0 w-full h-full object-cover"
-        />
-
         <div class="flex justify-center items-center absolute inset-0 z-10">
           <button
             @click="captureImage"
             class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
           >
-            Live Capture
+            Capture
           </button>
         </div>
+      </div>
+
+      <!-- Captured Image -->
+      <img
+        v-if="capturedImage && !showCamera"
+        :src="capturedImage"
+        alt="Captured"
+        class="absolute inset-0 w-full h-full object-cover"
+      />
+
+      <div
+        v-if="capturedImage && !showCamera"
+        class="flex justify-center items-center mt-4"
+      >
+        <button
+          @click="showCamera = true"
+          class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded"
+        >
+          Retake
+        </button>
       </div>
     </div>
     <div class="mb-4">
@@ -84,10 +99,14 @@ const capturedImage = ref<string | null>(null)
 const coordinates = ref<{ latitude: number; longitude: number } | null>(null)
 const locationLoading = ref(true)
 const notes = ref('')
+const showCamera = ref(true)
 
 const initCamera = async () => {
   try {
+    // Request camera access
     const stream = await navigator.mediaDevices.getUserMedia({ video: true })
+
+    // Set the video source
     if (video.value) {
       video.value.srcObject = stream
       video.value.play()
@@ -128,6 +147,7 @@ const captureImage = () => {
       context.drawImage(video.value, 0, 0, canvas.width, canvas.height)
       capturedImage.value = canvas.toDataURL('image/png')
       console.log('Captured image data:', capturedImage.value)
+      showCamera.value = false // Hide camera after capture
     }
   }
 }
@@ -163,4 +183,3 @@ onUnmounted(() => {
   object-fit: cover;
 }
 </style>
-
