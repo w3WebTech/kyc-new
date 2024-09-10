@@ -137,7 +137,8 @@ const captureImage = () => {
     const context = canvas.getContext('2d')
     if (context) {
       context.drawImage(video.value, 0, 0, canvas.width, canvas.height)
-      capturedImage.value = canvas.toDataURL('image/png')
+      const imageData = canvas.toDataURL('image/png')
+      capturedImage.value = imageData
       showCamera.value = false
     } else {
       console.error('Canvas context is null')
