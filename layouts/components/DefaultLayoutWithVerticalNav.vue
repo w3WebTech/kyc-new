@@ -24,8 +24,11 @@ import UserProfile from '@/layouts/components/UserProfile.vue'
         <!-- 👉 Search -->
 
         <VSpacer />
-
-        <NavbarThemeSwitcher class="me-2" />
+        <div class="px-4 font-bold py-1 text-sm">
+          <div>GUD001</div>
+          <div>Praveen</div>
+        </div>
+        <!-- <NavbarThemeSwitcher class="me-2" /> -->
         <UserProfile />
       </div>
     </template>
