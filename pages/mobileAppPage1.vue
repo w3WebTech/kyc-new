@@ -126,9 +126,7 @@ const switchCamera = async () => {
 
     let newCamera
     if (availableCameras.length > 1) {
-      const currentCameraIndex = availableCameras.findIndex(
-        device => device.deviceId === currentCamera.getSettings().deviceId,
-      )
+      const currentCameraIndex = availableCameras.findIndex(device => device.deviceId === currentCamera.deviceId)
       newCamera = availableCameras[(currentCameraIndex + 1) % availableCameras.length]
     } else {
       console.log('Only one camera available')
