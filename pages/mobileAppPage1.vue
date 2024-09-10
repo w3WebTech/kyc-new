@@ -38,6 +38,7 @@
           playsinline="true"
           v-if="showCamera"
           class="absolute inset-0 w-full h-full object-cover"
+          @loadedmetadata="videoLoaded"
         ></video>
 
         <!-- Captured Image -->
@@ -103,7 +104,11 @@ const coordinates = ref<{ latitude: number; longitude: number } | null>(null)
 const locationLoading = ref(true)
 const notes = ref('')
 const showCamera = ref(false)
-
+const videoLoaded = () => {
+  if (video.value) {
+    initCamera()
+  }
+}
 const toggleCamera = () => {
   showCamera.value = !showCamera.value
   console.log(showCamera.value, 'showCamera.value')
