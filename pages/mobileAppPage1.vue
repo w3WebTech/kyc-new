@@ -159,8 +159,8 @@ const captureImage = () => {
 }
 
 onMounted(async () => {
-  await initCamera()
   getLocation()
+  await initCamera()
 })
 
 onUnmounted(() => {
