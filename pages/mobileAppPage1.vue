@@ -1,18 +1,19 @@
 <template>
-  <div class="p-4 rounded-md shadow-md bg-white">
-    <div class="flex justify-between items-center mb-4">
-      <h2 class="text-xl font-bold">A101</h2>
+  <div class="rounded-md shadow-md bg-white">
+    <div class="flex justify-between items-center p-3">
+      <h2 class="text-xl text-blue-900 font-bold">A101</h2>
     </div>
-    <div class="mb-4">
-      <h3 class="text-lg font-medium mb-2">Finy Wealth</h3>
-      <p class="text-gray-600">Andhra Pradesh</p>
-      <p class="text-gray-600">
-        GPS {{ coordinates ? `${coordinates.latitude}, ${coordinates.longitude}` : 'Unable to get location' }}
+    <div class="border-b">
+      <h3 class="font-medium mb-1 px-3">Finy Wealth</h3>
+      <p class="text-gray-600 font-medium px-3">Andhra Pradesh</p>
+      <p class="text-gray-600 px-3">
+        <span class="text-blue-900">GPS</span>
+        {{ coordinates ? `${coordinates.latitude}, ${coordinates.longitude}` : 'Unable to get location' }}
       </p>
     </div>
-    <VDivider />
-    <div class="mb-4">
-      <h4 class="text-lg font-medium mb-2">Step 1:</h4>
+
+    <div class="mb-2 p-3">
+      <h4 class="text-lg text-blue-900 font-medium mb-2">Step 1:</h4>
       <p class="text-gray-600">Please take a live photo of Name</p>
 
       <div class="w-full border-dotted border-2 rounded h-64 relative">
@@ -64,30 +65,25 @@
         </button>
       </div>
     </div>
-    <div class="mb-4">
-      <label
-        for="message"
-        class="block text-gray-700 font-bold mb-2"
-      >
-        Optional Message / Notes
-      </label>
+    <div class="p-3">
       <textarea
         id="message"
         rows="4"
         v-model="notes"
+        placeholder="  Optional Message / Notes"
         class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
       ></textarea>
     </div>
-    <div class="flex justify-between">
+    <div class="flex justify-between p-3">
       <button
         @click="previousStep"
-        class="border border-gray-500 text-gray-500 font-bold py-2 px-4 rounded"
+        class="border border-gray-500 text-gray-500 font-bold py-2 px-4 w-100 mr-2 rounded"
       >
         ← Previous
       </button>
       <button
         @click="nextStep"
-        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        class="bg-blue-900 hover:bg-blue-700 text-white font-bold py-2 px-4 ml-2 w-100 rounded"
       >
         Next →
       </button>
@@ -186,6 +182,11 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+.divider {
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 20px;
+}
+
 .relative {
   position: relative;
 }
