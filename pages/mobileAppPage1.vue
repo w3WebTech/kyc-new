@@ -139,7 +139,11 @@ const switchCamera = async () => {
       },
     })
 
-    video.value.srcObject = newStream
+    // Replace the current video track with the new one
+    videoTracks[0]
+      .stop()(video.value.srcObject as MediaStream)
+      .addVideoTrack(newStream.getVideoTracks()[0])
+
     video.value.play()
   } catch (error) {
     console.error('Error switching camera:', error)
