@@ -40,13 +40,7 @@
           v-if="showCamera"
           class="absolute inset-0 w-full h-full object-cover"
           @loadedmetadata="videoLoaded"
-        >
-          <img
-            src="@/public/picture.png"
-            alt="Placeholder"
-            class="absolute flex justify-center items-center w-10 h-10 object-cover z-10"
-          />
-        </video>
+        ></video>
 
         <!-- Captured Image -->
         <img
@@ -60,13 +54,19 @@
       <!-- Capture button only shown when live camera feed is displayed -->
       <div
         v-if="showCamera"
-        class="flex justify-center mt-4"
+        class="flex justify-between p-3"
       >
         <button
           @click="captureImage"
-          class="bg-blue-900 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          class="bg-blue-900 hover:bg-blue-700 text-white font-bold py-2 rounded w-60 mr-2"
         >
           Capture
+        </button>
+        <button
+          @click="switchCamera"
+          class="bg-blue-900 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-100"
+        >
+          Switch Camera
         </button>
       </div>
     </div>
@@ -117,7 +117,36 @@ const toggleCamera = () => {
     initCamera()
   }
 }
+const switchCamera = async () => {
+  try {
+    const videoTracks = (video.value.srcObject as MediaStream).getVideoTracks()
+    const currentCamera = videoTracks[0]
+    const cameras = await navigator.mediaDevices.enumerateDevices()
+    const availableCameras = cameras.filter(device => device.kind === 'videoinput')
 
+    let newCamera
+    if (availableCameras.length > 1) {
+      const currentCameraIndex = availableCameras.findIndex(
+        device => device.deviceId === currentCamera.getSettings().deviceId,
+      )
+      newCamera = availableCameras[(currentCameraIndex + 1) % availableCameras.length]
+    } else {
+      console.log('Only one camera available')
+      return
+    }
+
+    const newStream = await navigator.mediaDevices.getUserMedia({
+      video: {
+        deviceId: newCamera.deviceId,
+      },
+    })
+
+    video.value.srcObject = newStream
+    video.value.play()
+  } catch (error) {
+    console.error('Error switching camera:', error)
+  }
+}
 const initCamera = async () => {
   try {
     console.log('Initializing camera...')
