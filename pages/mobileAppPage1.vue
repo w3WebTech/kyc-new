@@ -44,7 +44,7 @@
           <img
             src="@/public/picture.png"
             alt="Placeholder"
-            class="absolute flex justify-center items-center w-10 h-10 object-cover"
+            class="absolute flex justify-center items-center w-10 h-10 object-cover z-10"
           />
         </video>
 
