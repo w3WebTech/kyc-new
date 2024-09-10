@@ -31,10 +31,11 @@
         </div>
 
         <!-- Live Camera Feed -->
+
         <video
           ref="video"
           autoplay
-          playsinline
+          playsinline="true"
           v-if="showCamera"
           class="absolute inset-0 w-full h-full object-cover"
         ></video>
@@ -105,6 +106,7 @@ const showCamera = ref(false)
 
 const toggleCamera = () => {
   showCamera.value = !showCamera.value
+  console.log(showCamera.value, 'showCamera.value')
 }
 
 const initCamera = async () => {
