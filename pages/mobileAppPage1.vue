@@ -128,21 +128,29 @@ const switchCamera = async () => {
     const devices = await navigator.mediaDevices.enumerateDevices()
     const videoDevices = devices.filter(device => device.kind === 'videoinput')
 
-    // Find the index of the current camera
+    // Find the current camera
     const currentCameraId = videoTracks[0].getSettings().deviceId
-    const currentIndex = videoDevices.findIndex(device => device.deviceId === currentCameraId)
+    const currentCamera = videoDevices.find(device => device.deviceId === currentCameraId)
 
-    // Find the index of the new camera
-    const newIndex = (currentIndex + 1) % videoDevices.length
-    const newCamera = videoDevices[newIndex]
+    // Find the next camera
+    let nextCamera
+    for (let i = 0; i < videoDevices.length; i++) {
+      if (videoDevices[i] === currentCamera) {
+        nextCamera = videoDevices[(i + 1) % videoDevices.length]
+        break
+      }
+    }
 
     // Stop the current video track
     videoTracks[0].stop()
 
     // Create a new stream with the new camera
     const newStream = await navigator.mediaDevices.getUserMedia({
-      video: { deviceId: newCamera.deviceId },
+      video: { deviceId: nextCamera.deviceId },
     })
+
+    // Release resources associated with the old stream
+    stream.getTracks().forEach(track => track.stop())
 
     // Set the new stream to the video element
     if (video.value) {
