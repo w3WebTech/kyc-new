@@ -15,20 +15,30 @@
       <h4 class="text-lg font-medium mb-2">Step 1:</h4>
       <p class="text-gray-600">Please take a live photo of Name</p>
 
-      <div class="w-full border rounded h-20 py-4">
-        <div class="flex justify-center items-center">
-          <img
-            src="@/public/picture.png"
-            alt=""
-            class="h-10 w-10"
-          />
-        </div>
+      <div class="w-full border rounded h-64 py-4 relative">
+        <!-- Live Camera Feed -->
+        <video
+          ref="video"
+          autoplay
+          playsinline
+          class="absolute inset-0 w-full h-full object-cover"
+        ></video>
 
-        <div
-          class="flex justify-center items-center"
-          @click="captureImage"
-        >
-          Live Capture
+        <!-- Captured Image -->
+        <img
+          v-if="capturedImage"
+          :src="capturedImage"
+          alt="Captured"
+          class="absolute inset-0 w-full h-full object-cover"
+        />
+
+        <div class="flex justify-center items-center absolute inset-0 z-10">
+          <button
+            @click="captureImage"
+            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          >
+            Live Capture
+          </button>
         </div>
       </div>
     </div>
@@ -42,14 +52,26 @@
         id="message"
         rows="4"
         class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+        v-model="notes"
       ></textarea>
     </div>
     <div class="flex justify-end">
-      <button class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded mr-4">← Previous</button>
-      <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Next →</button>
+      <button
+        @click="previousStep"
+        class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded mr-4"
+      >
+        ← Previous
+      </button>
+      <button
+        @click="nextStep"
+        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+      >
+        Next →
+      </button>
     </div>
   </div>
 </template>
+
 
 
 
@@ -58,14 +80,9 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 
 const video = ref<HTMLVideoElement | null>(null)
-const imageData = ref<string | null>(null)
-const currentStep = ref(1)
+const capturedImage = ref<string | null>(null)
 const coordinates = ref<{ latitude: number; longitude: number } | null>(null)
 const locationLoading = ref(true)
-const mobileNumber = ref('')
-const isValidMobileNumber = ref(true)
-const name = ref('')
-const address = ref('')
 const notes = ref('')
 
 const initCamera = async () => {
@@ -73,10 +90,10 @@ const initCamera = async () => {
     const stream = await navigator.mediaDevices.getUserMedia({ video: true })
     if (video.value) {
       video.value.srcObject = stream
+      video.value.play()
     }
   } catch (error) {
     console.error('Error accessing camera:', error)
-    // Handle error here
   }
 }
 
@@ -100,21 +117,19 @@ const getLocation = async () => {
     console.error('Error getting location:', error)
   }
 }
+
 const captureImage = () => {
   const canvas = document.createElement('canvas')
   if (video.value) {
     canvas.width = video.value.videoWidth
     canvas.height = video.value.videoHeight
-    canvas.getContext('2d')?.drawImage(video.value, 0, 0, canvas.width, canvas.height)
-    capturedImage.value = canvas.toDataURL('image/png')
-    console.log('Captured image data:', capturedImage.value)
+    const context = canvas.getContext('2d')
+    if (context) {
+      context.drawImage(video.value, 0, 0, canvas.width, canvas.height)
+      capturedImage.value = canvas.toDataURL('image/png')
+      console.log('Captured image data:', capturedImage.value)
+    }
   }
-}
-
-const validateMobileNumber = () => {
-  // Add your validation logic here
-  const pattern = /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/g
-  isValidMobileNumber.value = pattern.test(mobileNumber.value)
 }
 
 onMounted(async () => {
@@ -124,41 +139,28 @@ onMounted(async () => {
 
 onUnmounted(() => {
   if (video.value && video.value.srcObject) {
-    const tracks = video.value.srcObject.getTracks()
+    const tracks = (video.value.srcObject as MediaStream).getTracks()
     tracks.forEach(track => track.stop())
   }
 })
-
-const apCode = ref('')
-
-function previousStep() {
-  currentStep.value--
-}
-
-function nextStep() {
-  currentStep.value++
-}
-
-function submit() {
-  // Here you would send the collected data to your backend
-  console.log('Collected data:', {
-    apCode: apCode.value,
-    imageData: imageData.value,
-    coordinates: coordinates.value,
-    mobileNumber: mobileNumber.value,
-    name: name.value,
-    address: address.value,
-    notes: notes.value,
-  })
-}
 </script>
 
-<style scoped>
-.step {
-  display: none;
-}
 
-.step.active {
-  display: block;
+<style scoped>
+.relative {
+  position: relative;
+}
+.absolute {
+  position: absolute;
+}
+.inset-0 {
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+.object-cover {
+  object-fit: cover;
 }
 </style>
+
