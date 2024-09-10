@@ -121,18 +121,18 @@ const switchCamera = async () => {
   try {
     const videoTracks = (video.value.srcObject as MediaStream).getVideoTracks()
     const currentCamera = videoTracks[0]
-    const cameras = await navigator.mediaDevices.enumerateDevices()
-    const availableCameras = cameras.filter(device => device.kind === 'videoinput')
+    const devices = await navigator.mediaDevices.enumerateDevices()
+    const videoDevices = devices.filter(device => device.kind === 'videoinput')
 
-    let newCamera
-    if (availableCameras.length > 1) {
-      const currentCameraIndex = availableCameras.findIndex(device => device.deviceId === currentCamera.deviceId)
-      newCamera = availableCameras[(currentCameraIndex + 1) % availableCameras.length]
-    } else {
-      console.log('Only one camera available')
-      return
+    let newIndex
+    for (let i = 0; i < videoDevices.length; i++) {
+      if (videoDevices[i].deviceId === currentCamera.getSettings().deviceId) {
+        newIndex = (i + 1) % videoDevices.length
+        break
+      }
     }
 
+    const newCamera = videoDevices[newIndex]
     const newStream = await navigator.mediaDevices.getUserMedia({
       video: {
         deviceId: newCamera.deviceId,
