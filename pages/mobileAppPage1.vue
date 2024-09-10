@@ -15,35 +15,34 @@
       <h4 class="text-lg font-medium mb-2">Step 1:</h4>
       <p class="text-gray-600">Please take a live photo of Name</p>
 
-      <div
-        class="w-full border rounded h-64 py-4 relative"
-        v-if="showCamera"
-      >
-        <!-- Live Camera Feed -->
-        <video
-          ref="video"
-          autoplay
-          playsinline
-          class="absolute inset-0 w-full h-full object-cover"
-        ></video>
+      <div class="w-full border rounded h-64 py-4 relative">
+        <div v-if="showCamera">
+          <!-- Live Camera Feed -->
+          <video
+            ref="video"
+            autoplay
+            playsinline
+            class="absolute inset-0 w-full h-full object-cover"
+          ></video>
 
-        <div class="flex justify-center items-center absolute inset-0 z-10">
-          <button
-            @click="captureImage"
-            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          >
-            Capture
-          </button>
+          <div class="flex justify-center items-center absolute inset-0 z-10">
+            <button
+              @click="captureImage"
+              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            >
+              Capture
+            </button>
+          </div>
         </div>
-      </div>
 
-      <!-- Captured Image -->
-      <img
-        v-if="capturedImage && !showCamera"
-        :src="capturedImage"
-        alt="Captured"
-        class="absolute inset-0 w-full h-full object-cover"
-      />
+        <!-- Captured Image -->
+        <img
+          v-if="capturedImage && !showCamera"
+          :src="capturedImage"
+          alt="Captured"
+          class="absolute inset-0 w-full h-full object-cover"
+        />
+      </div>
 
       <div
         v-if="capturedImage && !showCamera"
