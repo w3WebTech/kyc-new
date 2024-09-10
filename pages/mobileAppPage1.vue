@@ -119,36 +119,41 @@ const toggleCamera = () => {
 }
 const switchCamera = async () => {
   try {
-    const videoTracks = (video.value.srcObject as MediaStream).getVideoTracks()
-    const currentCamera = videoTracks[0]
+    // Get current video tracks
+    const stream = video.value?.srcObject as MediaStream
+    const videoTracks = stream?.getVideoTracks()
+    if (!videoTracks || videoTracks.length === 0) return
+
+    // Get list of video devices
     const devices = await navigator.mediaDevices.enumerateDevices()
     const videoDevices = devices.filter(device => device.kind === 'videoinput')
 
-    let newIndex
-    for (let i = 0; i < videoDevices.length; i++) {
-      if (videoDevices[i].deviceId === currentCamera.getSettings().deviceId) {
-        newIndex = (i + 1) % videoDevices.length
-        break
-      }
-    }
+    // Find the index of the current camera
+    const currentCameraId = videoTracks[0].getSettings().deviceId
+    const currentIndex = videoDevices.findIndex(device => device.deviceId === currentCameraId)
 
+    // Find the index of the new camera
+    const newIndex = (currentIndex + 1) % videoDevices.length
     const newCamera = videoDevices[newIndex]
+
+    // Stop the current video track
+    videoTracks[0].stop()
+
+    // Create a new stream with the new camera
     const newStream = await navigator.mediaDevices.getUserMedia({
-      video: {
-        deviceId: newCamera.deviceId,
-      },
+      video: { deviceId: newCamera.deviceId },
     })
 
-    // Replace the current video track with the new one
-    videoTracks[0]
-      .stop()(video.value.srcObject as MediaStream)
-      .addVideoTrack(newStream.getVideoTracks()[0])
-
-    video.value.play()
+    // Set the new stream to the video element
+    if (video.value) {
+      video.value.srcObject = newStream
+      video.value.play()
+    }
   } catch (error) {
     console.error('Error switching camera:', error)
   }
 }
+
 const initCamera = async () => {
   try {
     console.log('Initializing camera...')
