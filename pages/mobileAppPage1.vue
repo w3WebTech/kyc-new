@@ -15,44 +15,53 @@
       <h4 class="text-lg font-medium mb-2">Step 1:</h4>
       <p class="text-gray-600">Please take a live photo of Name</p>
 
-      <div class="w-full border rounded h-64 py-4 relative">
+      <div class="w-full border-dotted border-2 rounded h-64 py-4 relative">
+        <!-- Show picture image initially -->
+        <div
+          class="py-20"
+          v-if="!showCamera && !capturedImage"
+          @click="toggleCamera"
+        >
+          <div class="flex justify-center items-center">
+            <img
+              src="@/public/picture.png"
+              alt=""
+              class="inset-0 w-10 h-10 object-cover"
+            />
+          </div>
+          <div class="flex justify-center items-center font-bold">Live Capture</div>
+        </div>
+
+        <!-- Live Camera Feed -->
         <div v-if="showCamera">
-          <!-- Live Camera Feed -->
           <video
             ref="video"
             autoplay
             playsinline
-            class="absolute inset-0 w-full h-full object-cover"
+            class="w-full h-full object-cover absolute"
           ></video>
-
-          <div class="flex justify-center items-center absolute inset-0 z-10">
-            <button
-              @click="captureImage"
-              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-            >
-              Capture
-            </button>
-          </div>
         </div>
 
         <!-- Captured Image -->
         <img
-          v-if="capturedImage && !showCamera"
-          :src="capturedImage"
+          v-if="capturedImage"
+          :src="capturedImage || 'path/to/placeholder.jpg'"
           alt="Captured"
           class="absolute inset-0 w-full h-full object-cover"
+          @click="toggleCamera"
         />
       </div>
 
+      <!-- Capture button only shown when live camera feed is displayed -->
       <div
-        v-if="capturedImage && !showCamera"
-        class="flex justify-center items-center mt-4"
+        v-if="showCamera"
+        class="flex"
       >
         <button
-          @click="showCamera = true"
-          class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded"
+          @click="captureImage"
+          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded my-4 mx-auto"
         >
-          Retake
+          Capture
         </button>
       </div>
     </div>
@@ -69,26 +78,22 @@
         v-model="notes"
       ></textarea>
     </div>
-    <div class="flex justify-end">
+    <div class="flex">
       <button
         @click="previousStep"
-        class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded mr-4"
+        class="border border-2 border-gray-500 text-gray-500 font-bold py-2 px-4 mr-1 rounded w-100"
       >
         ← Previous
       </button>
       <button
         @click="nextStep"
-        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 ml-1 rounded w-100"
       >
         Next →
       </button>
     </div>
   </div>
 </template>
-
-
-
-
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
@@ -98,8 +103,10 @@ const capturedImage = ref<string | null>(null)
 const coordinates = ref<{ latitude: number; longitude: number } | null>(null)
 const locationLoading = ref(true)
 const notes = ref('')
-const showCamera = ref(true)
-
+const showCamera = ref(false)
+const toggleCamera = () => {
+  showCamera.value = !showCamera.value
+}
 const initCamera = async () => {
   try {
     // Request camera access
