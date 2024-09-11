@@ -6,9 +6,24 @@
     <div class="border-b">
       <h3 class="font-medium mb-1 px-3">Finy Wealth</h3>
       <p class="text-gray-600 font-medium px-3">Andhra Pradesh</p>
-      <p class="text-gray-600 px-3">
+      <p
+        class="px-3"
+        :class="coordinates ? 'text-gray-500' : 'text-error'"
+      >
         <span class="text-blue-900">GPS</span>
-        {{ coordinates ? `${coordinates.latitude}, ${coordinates.longitude}` : 'Unable to get location' }}
+        {{ coordinates ? `${coordinates.latitude}, ${coordinates.longitude}` : 'Unable to get location,  ' }}
+      </p>
+      <p
+        class="px-3 text-error"
+        v-if="!coordinates"
+      >
+        <VIcon
+          icon="ri-information-line"
+          size="20"
+          color="error"
+          class="pb-1"
+        />
+        Please Enable Location in Mobile
       </p>
     </div>
 
