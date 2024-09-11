@@ -4,8 +4,20 @@
       ref="video"
       width="640"
       height="480"
+      autoplay
+    ></video>
+    <button @click="capture">Capture</button>
+    <canvas
+      ref="canvas"
+      width="640"
+      height="480"
+      style="display: none"
+    ></canvas>
+    <img
+      v-if="image"
+      :src="image"
+      alt="Captured Image"
     />
-    <button @click="switchCamera">Switch Camera</button>
   </div>
 </template>
 
@@ -13,32 +25,28 @@
 export default {
   data() {
     return {
-      stream: null,
-      videoTracks: [],
+      image: null,
     }
   },
   mounted() {
-    this.requestCameraAccess()
+    this.startCamera()
   },
   methods: {
-    async requestCameraAccess() {
+    async startCamera() {
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false })
-        this.stream = stream
-        this.videoTracks = stream.getVideoTracks()
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true })
         this.$refs.video.srcObject = stream
       } catch (error) {
-        console.error('Error requesting camera access:', error)
+        console.error('Error accessing camera', error)
       }
     },
-    switchCamera() {
-      if (this.videoTracks.length > 1) {
-        this.videoTracks[0].stop()
-        this.videoTracks[1].start()
-        this.$refs.video.srcObject = new MediaStream([this.videoTracks[1]])
-      } else {
-        console.log('Only one camera available')
-      }
+    capture() {
+      const canvas = this.$refs.canvas
+      const video = this.$refs.video
+      const context = canvas.getContext('2d')
+
+      context.drawImage(video, 0, 0, canvas.width, canvas.height)
+      this.image = canvas.toDataURL('image/png')
     },
   },
 }
