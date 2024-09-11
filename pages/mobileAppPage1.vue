@@ -136,6 +136,7 @@ export default {
       canvas.height = video.videoHeight
       context.drawImage(video, 0, 0, canvas.width, canvas.height)
       this.capturedImage = canvas.toDataURL('image/png')
+      this.showCamera = false // Add this line
       console.log(this.capturedImage, '  this.capturedImage ')
     },
     async getLocation() {
