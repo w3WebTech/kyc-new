@@ -6,7 +6,10 @@
       height="480"
       autoplay
     ></video>
-    <button @click="capture">Capture</button>
+    <div>
+      <button @click="switchCamera">Switch Camera</button>
+      <button @click="capture">Capture</button>
+    </div>
     <canvas
       ref="canvas"
       width="640"
@@ -26,6 +29,8 @@ export default {
   data() {
     return {
       image: null,
+      currentStream: null,
+      facingMode: 'user', // 'user' for front camera, 'environment' for back camera
     }
   },
   mounted() {
@@ -33,12 +38,28 @@ export default {
   },
   methods: {
     async startCamera() {
+      //   const stream = await navigator.mediaDevices.getUserMedia({ video: true })
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true })
+        // Stop any existing stream before starting a new one
+        if (this.currentStream) {
+          const tracks = this.currentStream.getTracks()
+          tracks.forEach(track => track.stop())
+        }
+
+        // Get the media stream with the current facing mode
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: this.facingMode },
+        })
+
+        this.currentStream = stream
         this.$refs.video.srcObject = stream
       } catch (error) {
         console.error('Error accessing camera', error)
       }
+    },
+    async switchCamera() {
+      this.facingMode = this.facingMode === 'user' ? 'environment' : 'user'
+      await this.startCamera()
     },
     capture() {
       const canvas = this.$refs.canvas
@@ -51,3 +72,7 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+/* Add some basic styling if needed */
+</style>
