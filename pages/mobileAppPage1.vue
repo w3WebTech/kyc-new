@@ -97,7 +97,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, nextTick } from 'vue'
 
 const video = ref<HTMLVideoElement | null>(null)
 const capturedImage = ref<string | null>(null)
@@ -117,6 +117,24 @@ const toggleCamera = () => {
     initCamera()
   }
 }
+const initCamera = async () => {
+  try {
+    console.log('Initializing camera...')
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true })
+    console.log('Got stream:', stream)
+    nextTick(() => {
+      if (video.value) {
+        video.value.srcObject = stream
+        video.value.play()
+      } else {
+        console.error('Video element is null')
+      }
+    })
+  } catch (error) {
+    console.error('Error accessing camera:', error)
+  }
+}
+
 const switchCamera = async () => {
   try {
     // Get current video tracks
@@ -145,36 +163,23 @@ const switchCamera = async () => {
     videoTracks[0].stop()
 
     // Create a new stream with the new camera
-    const newStream = await navigator.mediaDevices.getUserMedia({
-      video: { deviceId: nextCamera.deviceId },
-    })
-
-    // Release resources associated with the old stream
-    stream.getTracks().forEach(track => track.stop())
-
-    // Set the new stream to the video element
-    if (video.value) {
-      video.value.srcObject = newStream
-      video.value.play()
+    try {
+      const newStream = await navigator.mediaDevices.getUserMedia({
+        video: { deviceId: nextCamera.deviceId },
+      })
+      nextTick(() => {
+        if (video.value) {
+          video.value.srcObject = newStream
+          video.value.play()
+        } else {
+          console.error('Video element is null')
+        }
+      })
+    } catch (error) {
+      console.error('Error switching camera:', error)
     }
   } catch (error) {
     console.error('Error switching camera:', error)
-  }
-}
-
-const initCamera = async () => {
-  try {
-    console.log('Initializing camera...')
-    const stream = await navigator.mediaDevices.getUserMedia({ video: true })
-    console.log('Got stream:', stream)
-    if (video.value) {
-      video.value.srcObject = stream
-      video.value.play()
-    } else {
-      console.error('Video element is null')
-    }
-  } catch (error) {
-    console.error('Error accessing camera:', error)
   }
 }
 
