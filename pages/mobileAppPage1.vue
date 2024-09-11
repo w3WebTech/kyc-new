@@ -43,7 +43,7 @@
         ></video> -->
         <video
           ref="video"
-          v-if="showCamera"
+          v-if="showCamera && !capturedImage"
           class="absolute inset-0 w-full h-full object-cover"
           autoplay
         ></video>
@@ -53,18 +53,17 @@
           v-if="capturedImage"
           :src="capturedImage"
           class="absolute inset-0 w-full h-full object-cover"
-          @click="toggleCamera"
         />
       </div>
 
       <!-- Capture button only shown when live camera feed is displayed -->
       <div
-        v-if="showCamera"
-        class="flex justify-between p-3"
+        v-if="showCamera && !capturedImage"
+        class="p-3"
       >
         <button
           @click="capture"
-          class="bg-blue-900 hover:bg-blue-700 text-white font-bold py-2 rounded w-60 mr-2"
+          class="bg-blue-900 hover:bg-blue-700 text-white font-bold py-2 rounded mr-2 w-full"
         >
           Capture
         </button>
@@ -137,6 +136,7 @@ export default {
       canvas.height = video.videoHeight
       context.drawImage(video, 0, 0, canvas.width, canvas.height)
       this.capturedImage = canvas.toDataURL('image/png')
+      console.log(this.capturedImage, '  this.capturedImage ')
     },
     async getLocation() {
       debugger
