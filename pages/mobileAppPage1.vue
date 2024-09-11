@@ -68,12 +68,12 @@
         >
           Capture
         </button>
-        <button
+        <!-- <button
           @click="switchCamera"
           class="bg-blue-900 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-100"
         >
           Switch Camera
-        </button>
+        </button> -->
       </div>
     </div>
     <div class="p-3">
@@ -105,8 +105,9 @@
 export default {
   data() {
     return {
+      image: null,
       currentStream: null,
-      facingMode: 'user',
+      facingMode: 'environment',
       showCamera: false, // 'user' for front camera, 'environment' for back camera
     }
   },
@@ -124,10 +125,10 @@ export default {
       this.currentStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: this.facingMode } })
       this.$refs.video.srcObject = this.currentStream
     },
-    async switchCamera() {
-      this.facingMode = this.facingMode === 'user' ? 'environment' : 'user'
-      await this.startCamera()
-    },
+    // async switchCamera() {
+    //   this.facingMode = this.facingMode === 'user' ? 'environment' : 'user'
+    //   await this.startCamera()
+    // },
     capture() {
       const canvas = document.createElement('canvas')
       const video = this.$refs.video
@@ -138,6 +139,7 @@ export default {
       this.capturedImage = canvas.toDataURL('image/png')
     },
     async getLocation() {
+      debugger
       try {
         const permission = await navigator.permissions.query('geolocation')
         if (permission.state === 'denied') {
