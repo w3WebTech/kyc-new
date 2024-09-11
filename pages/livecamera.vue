@@ -38,7 +38,6 @@ export default {
   },
   methods: {
     async startCamera() {
-      //   const stream = await navigator.mediaDevices.getUserMedia({ video: true })
       try {
         // Stop any existing stream before starting a new one
         if (this.currentStream) {
@@ -66,6 +65,7 @@ export default {
       const video = this.$refs.video
       const context = canvas.getContext('2d')
 
+      // Draw the video frame to the canvas
       context.drawImage(video, 0, 0, canvas.width, canvas.height)
       this.image = canvas.toDataURL('image/png')
     },
