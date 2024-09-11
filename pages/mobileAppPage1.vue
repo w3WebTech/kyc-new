@@ -33,13 +33,19 @@
 
         <!-- Live Camera Feed -->
 
-        <video
+        <!-- <video
           ref="video"
           autoplay
           playsinline="true"
           v-if="showCamera"
           class="absolute inset-0 w-full h-full object-cover"
           @loadedmetadata="videoLoaded"
+        ></video> -->
+        <video
+          ref="video"
+          v-if="showCamera"
+          class="absolute inset-0 w-full h-full object-cover"
+          autoplay
         ></video>
 
         <!-- Captured Image -->
@@ -57,7 +63,7 @@
         class="flex justify-between p-3"
       >
         <button
-          @click="captureImage"
+          @click="capture"
           class="bg-blue-900 hover:bg-blue-700 text-white font-bold py-2 rounded w-60 mr-2"
         >
           Capture
@@ -95,168 +101,76 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import { ref, onMounted, onUnmounted, nextTick } from 'vue'
-
-const video = ref<HTMLVideoElement | null>(null)
-const capturedImage = ref<string | null>(null)
-const coordinates = ref<{ latitude: number; longitude: number } | null>(null)
-const locationLoading = ref(true)
-const notes = ref('')
-const showCamera = ref(false)
-const videoLoaded = () => {
-  if (video.value) {
-    initCamera()
-  }
-}
-const toggleCamera = () => {
-  showCamera.value = !showCamera.value
-  console.log(showCamera.value, 'showCamera.value')
-  if (showCamera.value) {
-    initCamera()
-  }
-}
-const initCamera = async () => {
-  try {
-    console.log('Initializing camera...')
-    const stream = await navigator.mediaDevices.getUserMedia({ video: true })
-    console.log('Got stream:', stream)
-    nextTick(() => {
-      if (video.value) {
-        video.value.srcObject = stream
-        video.value.play()
-      } else {
-        console.error('Video element is null')
-      }
-    })
-  } catch (error) {
-    console.error('Error accessing camera:', error)
-  }
-}
-
-const switchCamera = async () => {
-  try {
-    // Get current video tracks
-    const stream = video.value?.srcObject as MediaStream
-    const videoTracks = stream?.getVideoTracks()
-    if (!videoTracks || videoTracks.length === 0) return
-
-    // Get list of video devices
-    const devices = await navigator.mediaDevices.enumerateDevices()
-    const videoDevices = devices.filter(device => device.kind === 'videoinput')
-
-    // Find the current camera
-    const currentCameraId = videoTracks[0].getSettings().deviceId
-    const currentCamera = videoDevices.find(device => device.deviceId === currentCameraId)
-
-    // Find the next camera
-    let nextCamera
-    for (let i = 0; i < videoDevices.length; i++) {
-      if (videoDevices[i] === currentCamera) {
-        nextCamera = videoDevices[(i + 1) % videoDevices.length]
-        break
-      }
+<script  lang="ts">
+export default {
+  data() {
+    return {
+      currentStream: null,
+      facingMode: 'user', // 'user' for front camera, 'environment' for back camera
     }
-
-    // Stop the current video track
-    videoTracks[0].stop()
-
-    // Create a new stream with the new camera
-    try {
-      const newStream = await navigator.mediaDevices.getUserMedia({
-        video: { deviceId: nextCamera.deviceId },
-      })
-      nextTick(() => {
-        if (video.value) {
-          video.value.srcObject = null // Reset the srcObject to null
-          video.value.srcObject = newStream // Set the new stream as srcObject
-          video.value.play() // Play the new stream
-        } else {
-          console.error('Video element is null')
+  },
+  mounted() {
+    this.startCamera(), this.getLocation()
+  },
+  methods: {
+    async startCamera() {
+      this.currentStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: this.facingMode } })
+      this.$refs.video.srcObject = this.currentStream
+    },
+    async switchCamera() {
+      this.facingMode = this.facingMode === 'user' ? 'environment' : 'user'
+      await this.startCamera()
+    },
+    capture() {
+      const canvas = document.createElement('canvas')
+      const video = this.$refs.video
+      const context = canvas.getContext('2d')
+      canvas.width = video.videoWidth
+      canvas.height = video.videoHeight
+      context.drawImage(video, 0, 0, canvas.width, canvas.height)
+      this.capturedImage = canvas.toDataURL('image/png')
+    },
+    async getLocation() {
+      try {
+        const permission = await navigator.permissions.query('geolocation')
+        if (permission.state === 'denied') {
+          console.error('Location permission denied')
+          return
         }
-      })
-    } catch (error) {
-      console.error('Error switching camera:', error)
-    }
-  } catch (error) {
-    console.error('Error switching camera:', error)
-  }
-}
 
-const captureImage = () => {
-  const canvas = document.createElement('canvas')
-  if (video.value) {
-    canvas.width = video.value.videoWidth
-    canvas.height = video.value.videoHeight
-    const context = canvas.getContext('2d')
-    if (context) {
-      context.drawImage(video.value, 0, 0, canvas.width, canvas.height)
-      const imageData = canvas.toDataURL('image/png')
-      capturedImage.value = imageData
-      showCamera.value = false
-    } else {
-      console.error('Canvas context is null')
-    }
-  } else {
-    console.error('Video element is null')
-  }
-}
-
-const getLocation = async () => {
-  try {
-    const permission = await navigator.permissions.query('geolocation')
-    if (permission.state === 'denied') {
-      console.error('Location permission denied')
-      return
-    }
-
-    if (permission.state === 'prompt') {
-      const result = await navigator.geolocation.requestPermission()
-      if (result !== 'granted') {
-        console.error('Location permission denied')
-        return
-      }
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      position => {
-        coordinates.value = {
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
+        if (permission.state === 'prompt') {
+          const result = await navigator.geolocation.requestPermission()
+          if (result !== 'granted') {
+            console.error('Location permission denied')
+            return
+          }
         }
-        locationLoading.value = false
-      },
-      error => {
+
+        navigator.geolocation.getCurrentPosition(
+          position => {
+            this.coordinates = {
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+            }
+            this.locationLoading = false
+          },
+          error => {
+            console.error('Error getting location:', error)
+            this.locationLoading = false
+          },
+          { enableHighAccuracy: true },
+        )
+      } catch (error) {
         console.error('Error getting location:', error)
-        locationLoading.value = false
-      },
-      { enableHighAccuracy: true },
-    )
-  } catch (error) {
-    console.error('Error getting location:', error)
-  }
+      }
+    },
+  },
 }
 
-onMounted(async () => {
-  getLocation()
-  await initCamera()
-})
-
-onUnmounted(() => {
-  if (video.value && video.value.srcObject) {
-    const tracks = (video.value.srcObject as MediaStream).getTracks()
-    tracks.forEach(track => track.stop())
-  }
-})
+// ... (no changes)
 </script>
 
 <style scoped>
-.divider {
-  border-bottom: 1px solid #ccc;
-  margin-bottom: 20px;
-}
-
 .relative {
   position: relative;
 }
