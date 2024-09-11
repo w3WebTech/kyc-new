@@ -169,8 +169,9 @@ const switchCamera = async () => {
       })
       nextTick(() => {
         if (video.value) {
-          video.value.srcObject = newStream
-          video.value.play()
+          video.value.srcObject = null // Reset the srcObject to null
+          video.value.srcObject = newStream // Set the new stream as srcObject
+          video.value.play() // Play the new stream
         } else {
           console.error('Video element is null')
         }
@@ -204,6 +205,20 @@ const captureImage = () => {
 
 const getLocation = async () => {
   try {
+    const permission = await navigator.permissions.query('geolocation')
+    if (permission.state === 'denied') {
+      console.error('Location permission denied')
+      return
+    }
+
+    if (permission.state === 'prompt') {
+      const result = await navigator.geolocation.requestPermission()
+      if (result !== 'granted') {
+        console.error('Location permission denied')
+        return
+      }
+    }
+
     navigator.geolocation.getCurrentPosition(
       position => {
         coordinates.value = {
