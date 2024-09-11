@@ -117,7 +117,7 @@ export default {
     toggleCamera() {
       this.showCamera = !this.showCamera
       if (this.showCamera) {
-        this.initCamera()
+        this.startCamera()
       }
     },
     async startCamera() {
