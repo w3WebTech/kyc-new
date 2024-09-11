@@ -12,12 +12,7 @@ import VerticalNavLink from '@layouts/components/VerticalNavLink.vue'
       to: '/mobileAppPage1',
     }"
   />
-  <VerticalNavLink
-    :item="{
-      title: 'livecamera',
-      to: '/livecamera',
-    }"
-  />
+
   <!-- <VerticalNavLink
     :item="{
       title: 'Progress',
