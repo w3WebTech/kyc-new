@@ -106,13 +106,20 @@ export default {
   data() {
     return {
       currentStream: null,
-      facingMode: 'user', // 'user' for front camera, 'environment' for back camera
+      facingMode: 'user',
+      showCamera: false, // 'user' for front camera, 'environment' for back camera
     }
   },
   mounted() {
     this.startCamera(), this.getLocation()
   },
   methods: {
+    toggleCamera() {
+      this.showCamera = !this.showCamera
+      if (this.showCamera) {
+        this.initCamera()
+      }
+    },
     async startCamera() {
       this.currentStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: this.facingMode } })
       this.$refs.video.srcObject = this.currentStream
