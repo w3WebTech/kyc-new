@@ -59,11 +59,11 @@
       <!-- Capture button only shown when live camera feed is displayed -->
       <div
         v-if="showCamera && !capturedImage"
-        class="p-3"
+        class="py-3"
       >
         <button
           @click="capture"
-          class="bg-blue-900 hover:bg-blue-700 text-white font-bold py-2 rounded mr-2 w-full"
+          class="bg-blue-900 hover:bg-blue-700 text-white font-bold py-2 rounded w-full"
         >
           Capture
         </button>
@@ -107,7 +107,8 @@ export default {
       image: null,
       currentStream: null,
       facingMode: 'environment',
-      showCamera: false, // 'user' for front camera, 'environment' for back camera
+      showCamera: false,
+      coordinates: null, // 'user' for front camera, 'environment' for back camera
     }
   },
   mounted() {
@@ -140,22 +141,7 @@ export default {
       console.log(this.capturedImage, '  this.capturedImage ')
     },
     async getLocation() {
-      debugger
       try {
-        const permission = await navigator.permissions.query('geolocation')
-        if (permission.state === 'denied') {
-          console.error('Location permission denied')
-          return
-        }
-
-        if (permission.state === 'prompt') {
-          const result = await navigator.geolocation.requestPermission()
-          if (result !== 'granted') {
-            console.error('Location permission denied')
-            return
-          }
-        }
-
         navigator.geolocation.getCurrentPosition(
           position => {
             this.coordinates = {
@@ -165,7 +151,14 @@ export default {
             this.locationLoading = false
           },
           error => {
-            console.error('Error getting location:', error)
+            if (error.code === 1) {
+              // PERMISSION_DENIED
+              console.error('Location permission denied')
+              // You can display a prompt to the user to grant permission
+              alert('Please grant location permission to continue')
+            } else {
+              console.error('Error getting location:', error)
+            }
             this.locationLoading = false
           },
           { enableHighAccuracy: true },
